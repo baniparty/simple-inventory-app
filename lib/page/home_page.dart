@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:inventory_app/page/home_cubit.dart';
 import 'package:inventory_app/widget/product_item.dart';
 
 List<Map<String, dynamic>> products = [
@@ -55,133 +60,144 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  final cubit = HomeCubit();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
+    return BlocProvider.value(
+      value: cubit,
+      child: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
 
-              //Button upload file
-              SizedBox(
-                height: 44,
-                child: TextButton.icon(
-                  onPressed: () {},
-                  label: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset('assets/icons/ic_upload.svg'),
-                      const Text('Upload File',
-                          style: TextStyle(color: Colors.white, fontSize: 16))
-                    ],
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        const WidgetStatePropertyAll(Color(0xFF0B8F47)),
-                    shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                //Button upload file
+                SizedBox(
+                  height: 44,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      cubit.openFile();
+                    },
+                    label: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset('assets/icons/ic_upload.svg'),
+                        const Text('Upload File',
+                            style: TextStyle(color: Colors.white, fontSize: 16))
+                      ],
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          const WidgetStatePropertyAll(Color(0xFF0B8F47)),
+                      shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              //Field search data
-              SizedBox(
-                height: 44,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Cari Data',
-                    hintStyle:
-                        const TextStyle(color: Colors.grey, fontSize: 14),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: SvgPicture.asset('assets/icons/ic_search.svg'),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                          color: (Color(0xFF0B8F47)), width: 1),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                          color: (Color(0xFF0B8F47)), width: 1),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              //Select all and product count detected
-              Row(
-                children: [
-                  Checkbox(
-                    value: isSelectAll,
-                    activeColor: const Color(0xFF0B8F47),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    onChanged: toggleSelectAll,
-                  ),
-                  const Text('Pilih Semua', style: TextStyle(fontSize: 14)),
-                  const Spacer(),
-                  Text('${products.length} produk terdeteksi',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                  const SizedBox(width: 20),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
-              //Product list
-              Column(
-                children: List.generate(products.length, (index) {
-                  return ProductItem(
-                    company: products[index]["company"],
-                    name: products[index]["name"],
-                    categories:
-                        List<String>.from(products[index]["categories"]),
-                    codes: List<String>.from(products[index]["codes"]),
-                    isSelected: selectedProducts[index],
-                    onToggle: () => toggleProduct(index),
-                  );
-                }),
-              ),
-
-              const SizedBox(height: 24),
-
-              //Submit button
-              SizedBox(
-                height: 44,
-                width: 144,
-                child: TextButton.icon(
-                  onPressed: () {},
-                  label: const Text('SUBMIT',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        const WidgetStatePropertyAll(Color(0xFF0B8F47)),
-                    shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                //Field search data
+                SizedBox(
+                  height: 44,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Cari Data',
+                      hintStyle:
+                          const TextStyle(color: Colors.grey, fontSize: 14),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: SvgPicture.asset('assets/icons/ic_search.svg'),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                            color: (Color(0xFF0B8F47)), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                            color: (Color(0xFF0B8F47)), width: 1),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      )),
+                const SizedBox(height: 8),
+
+                //Select all and product count detected
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isSelectAll,
+                      activeColor: const Color(0xFF0B8F47),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      onChanged: toggleSelectAll,
+                    ),
+                    const Text('Pilih Semua', style: TextStyle(fontSize: 14)),
+                    const Spacer(),
+                    Text('${state.list.length} produk terdeteksi',
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.grey)),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                //Product list
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.list.length,
+                    itemBuilder: (_, index) {
+                      return ProductItem(
+                        company: products[index]["company"],
+                        name: products[index]["name"],
+                        categories:
+                            List<String>.from(products[index]["categories"]),
+                        codes: List<String>.from(products[index]["codes"]),
+                        isSelected: selectedProducts[index],
+                        onToggle: () => toggleProduct(index),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                //Submit button
+                SizedBox(
+                  height: 44,
+                  width: 144,
+                  child: TextButton.icon(
+                    onPressed: () {},
+                    label: const Text('SUBMIT',
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          const WidgetStatePropertyAll(Color(0xFF0B8F47)),
+                      shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+              ],
+            ),
+          )),
+        );
+      }),
     );
   }
 }
