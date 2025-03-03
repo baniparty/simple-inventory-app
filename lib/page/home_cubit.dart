@@ -32,13 +32,16 @@ class HomeCubit extends Cubit<HomeState> {
           scrapingList.add(item);
           existIndex += 1;
         } else {
-          if (item.barcode != null) {
+          if (item.barcode != null && existIndex > -1) {
             scrapingList[existIndex].barcodes.add(item.barcode!);
           }
         }
       }
 
-      emit(state.copyWith(list: scrapingList));
+      final seen = <ItemUiModel>{};
+      final uniqueList =
+          scrapingList.where((entity) => seen.add(entity)).toList();
+      emit(state.copyWith(list: uniqueList));
     } else {
       // User canceled the picker
     }
