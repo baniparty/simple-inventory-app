@@ -42,10 +42,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isSelectAll = false;
-
-  void toggleProduct(int index) {}
-
   final cubit = HomeCubit();
 
   @override
@@ -124,12 +120,14 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     Checkbox(
-                      value: isSelectAll,
+                      value: state.selectAllProduct,
                       activeColor: const Color(0xFF0B8F47),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(2),
                       ),
-                      onChanged: (_) {},
+                      onChanged: (value) {
+                        cubit.setSelectAllProduct(value == true);
+                      },
                     ),
                     const Text('Pilih Semua', style: TextStyle(fontSize: 14)),
                     const Spacer(),
@@ -145,23 +143,24 @@ class _HomePageState extends State<HomePage> {
                 //Product list
                 Expanded(
                   child: ListView.builder(
-                    itemCount: state.searchList.isEmpty
+                    itemCount: state.searchList == null
                         ? state.list.length
-                        : state.searchList.length,
+                        : state.searchList?.length,
                     itemBuilder: (_, index) {
-                      final list = state.searchList.isEmpty
-                          ? state.list
-                          : state.searchList;
+                      final list = state.searchList ?? state.list;
                       return ProductItem(
                         company: list[index].companyName ?? '',
                         name: list[index].productName ?? '',
-                        categories: List<String>.from([
-                          list[index].category,
-                          list[index].subCategory
-                        ]),
-                        codes: List<String>.from(state.list[index].barcodes),
-                        isSelected: false,
-                        onToggle: () => toggleProduct(index),
+                        categories: List<String>.from(
+                            [list[index].category, list[index].subCategory]),
+                        codes: list[index].barcodes.map((e) => e ?? '').toList(),
+                        isSelected: state.selectedIndexes.contains(index),
+                        onToggle: () {
+                          cubit.setSelectedIndex(index);
+                        },
+                        onRemovedTap: () {
+                          cubit.removeItem(index);
+                        },
                       );
                     },
                   ),

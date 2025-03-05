@@ -1,7 +1,7 @@
-
 import 'package:csv2json/csv2json.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:inventory_app/item_ui_model.dart';
@@ -39,17 +39,33 @@ class HomeCubit extends Cubit<HomeState> {
       final result = scrapingList.distinctBy((e) => e.productName!).toList();
 
       emit(state.copyWith(list: result));
-    } else {
-      // User canceled the picker
     }
   }
 
   void search(String query) {
     if (query.isEmpty) {
-      emit(state.copyWith(searchList: []));
+      emit(state.copyWith(searchList: null));
     } else {
-      final result = state.list.where((a) =>
-          a.productName?.toLowerCase().contains(query.toLowerCase()) == true);
+      var result = <ItemUiModel>[];
+
+      final isNumeric = double.tryParse(query) != null;
+
+      if (isNumeric) {
+        result = state.list
+            .where((a) => a.barcodes
+                .where((code) => code?.startsWith(query) == true)
+                .isNotEmpty)
+            .toList();
+      } else {
+        result = state.list
+            .where((a) =>
+                a.productName?.toLowerCase().contains(query.toLowerCase()) ==
+                true)
+            .toList();
+      }
+
+      debugPrint("Manstap ${result[0].barcodes}");
+
       emit(state.copyWith(searchList: result.toList()));
     }
   }
@@ -61,6 +77,52 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
     return false;
+  }
+
+  void setSelectedIndex(int index) {
+    final currSelectedIndexes = List<int>.from(state.selectedIndexes);
+
+    debugPrint("Checked Index => $index");
+    final exist = currSelectedIndexes.contains(index);
+
+    if (exist) {
+      currSelectedIndexes.remove(index);
+    } else {
+      currSelectedIndexes.add(index);
+    }
+
+    emit(state.copyWith(selectedIndexes: currSelectedIndexes));
+  }
+
+  void removeItem(int index) {
+    final list = List<ItemUiModel>.from(state.list);
+    final currSelectedIndexes = List<int>.from(state.selectedIndexes);
+
+    list.removeAt(index);
+    currSelectedIndexes.remove(index);
+
+    emit(
+      state.copyWith(
+        selectedIndexes: currSelectedIndexes,
+        list: list,
+      ),
+    );
+  }
+
+  void setSelectAllProduct(bool value) {
+    final selectedIndexes = <int>[];
+    if (value) {
+      for (var index = 0; index < state.list.length; index++) {
+        selectedIndexes.add(index);
+      }
+    }
+
+    emit(
+      state.copyWith(
+        selectAllProduct: value,
+        selectedIndexes: selectedIndexes,
+      ),
+    );
   }
 }
 

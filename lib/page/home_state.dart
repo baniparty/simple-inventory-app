@@ -4,8 +4,11 @@ part of 'home_cubit.dart';
 class HomeState with _$HomeState {
   factory HomeState({
     required List<ItemUiModel> list,
-    required List<ItemUiModel> searchList,
+    required List<ItemUiModel>? searchList,
+    required List<int> selectedIndexes,
+    required bool selectAllProduct,
   }) = _HomeState;
 
-  factory HomeState.initial() => HomeState(list: [], searchList: []);
+  factory HomeState.initial() => HomeState(
+      list: [], searchList: null, selectedIndexes: [], selectAllProduct: false);
 }

@@ -8,6 +8,7 @@ class ProductItem extends StatelessWidget {
   final List<String> codes;
   final bool isSelected;
   final VoidCallback onToggle;
+  final VoidCallback onRemovedTap;
 
   const ProductItem({
     super.key,
@@ -16,7 +17,8 @@ class ProductItem extends StatelessWidget {
     required this.categories,
     required this.codes,
     required this.isSelected,
-    required this.onToggle,
+    required this.onToggle, 
+    required this.onRemovedTap,
   });
 
   @override
@@ -93,7 +95,7 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: onRemovedTap,
             icon: SvgPicture.asset('assets/icons/ic_delete.svg'),
           ),
         ],
