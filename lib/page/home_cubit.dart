@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:csv2json/csv2json.dart';
 import 'package:file_picker/file_picker.dart';
@@ -38,12 +36,44 @@ class HomeCubit extends Cubit<HomeState> {
         }
       }
 
-      final seen = <ItemUiModel>{};
-      final uniqueList =
-          scrapingList.where((entity) => seen.add(entity)).toList();
-      emit(state.copyWith(list: uniqueList));
+      final result = scrapingList.distinctBy((e) => e.productName!).toList();
+
+      emit(state.copyWith(list: result));
     } else {
       // User canceled the picker
     }
+  }
+
+  void search(String query) {
+    if (query.isEmpty) {
+      emit(state.copyWith(searchList: []));
+    } else {
+      final result = state.list.where((a) =>
+          a.productName?.toLowerCase().contains(query.toLowerCase()) == true);
+      emit(state.copyWith(searchList: result.toList()));
+    }
+  }
+
+  bool checkList(ItemUiModel cat, String q) {
+    for (int i = 0; i < state.list.length; i++) {
+      if (state.list[i].productName?.toLowerCase().contains(q) == true) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+extension IterableExtension<T> on List<T> {
+  Iterable<T> distinctBy(Object Function(T e) getCompareValue) {
+    var idSet = <Object>{};
+    var distinct = <T>[];
+    for (var d in this) {
+      if (idSet.add(getCompareValue(d))) {
+        distinct.add(d);
+      }
+    }
+
+    return distinct;
   }
 }

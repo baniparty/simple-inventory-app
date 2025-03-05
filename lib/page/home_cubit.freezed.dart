@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomeState {
   List<ItemUiModel> get list => throw _privateConstructorUsedError;
+  List<ItemUiModel> get searchList => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -30,7 +31,7 @@ abstract class $HomeStateCopyWith<$Res> {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
-  $Res call({List<ItemUiModel> list});
+  $Res call({List<ItemUiModel> list, List<ItemUiModel> searchList});
 }
 
 /// @nodoc
@@ -49,11 +50,16 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   @override
   $Res call({
     Object? list = null,
+    Object? searchList = null,
   }) {
     return _then(_value.copyWith(
       list: null == list
           ? _value.list
           : list // ignore: cast_nullable_to_non_nullable
+              as List<ItemUiModel>,
+      searchList: null == searchList
+          ? _value.searchList
+          : searchList // ignore: cast_nullable_to_non_nullable
               as List<ItemUiModel>,
     ) as $Val);
   }
@@ -67,7 +73,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
       __$$HomeStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<ItemUiModel> list});
+  $Res call({List<ItemUiModel> list, List<ItemUiModel> searchList});
 }
 
 /// @nodoc
@@ -84,11 +90,16 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? list = null,
+    Object? searchList = null,
   }) {
     return _then(_$HomeStateImpl(
       list: null == list
           ? _value._list
           : list // ignore: cast_nullable_to_non_nullable
+              as List<ItemUiModel>,
+      searchList: null == searchList
+          ? _value._searchList
+          : searchList // ignore: cast_nullable_to_non_nullable
               as List<ItemUiModel>,
     ));
   }
@@ -96,8 +107,12 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$HomeStateImpl implements _HomeState {
-  _$HomeStateImpl({required final List<ItemUiModel> list}) : _list = list;
+class _$HomeStateImpl with DiagnosticableTreeMixin implements _HomeState {
+  _$HomeStateImpl(
+      {required final List<ItemUiModel> list,
+      required final List<ItemUiModel> searchList})
+      : _list = list,
+        _searchList = searchList;
 
   final List<ItemUiModel> _list;
   @override
@@ -107,9 +122,26 @@ class _$HomeStateImpl implements _HomeState {
     return EqualUnmodifiableListView(_list);
   }
 
+  final List<ItemUiModel> _searchList;
   @override
-  String toString() {
-    return 'HomeState(list: $list)';
+  List<ItemUiModel> get searchList {
+    if (_searchList is EqualUnmodifiableListView) return _searchList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_searchList);
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'HomeState(list: $list, searchList: $searchList)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'HomeState'))
+      ..add(DiagnosticsProperty('list', list))
+      ..add(DiagnosticsProperty('searchList', searchList));
   }
 
   @override
@@ -117,12 +149,16 @@ class _$HomeStateImpl implements _HomeState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$HomeStateImpl &&
-            const DeepCollectionEquality().equals(other._list, _list));
+            const DeepCollectionEquality().equals(other._list, _list) &&
+            const DeepCollectionEquality()
+                .equals(other._searchList, _searchList));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_list));
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_list),
+      const DeepCollectionEquality().hash(_searchList));
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -134,10 +170,14 @@ class _$HomeStateImpl implements _HomeState {
 }
 
 abstract class _HomeState implements HomeState {
-  factory _HomeState({required final List<ItemUiModel> list}) = _$HomeStateImpl;
+  factory _HomeState(
+      {required final List<ItemUiModel> list,
+      required final List<ItemUiModel> searchList}) = _$HomeStateImpl;
 
   @override
   List<ItemUiModel> get list;
+  @override
+  List<ItemUiModel> get searchList;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.

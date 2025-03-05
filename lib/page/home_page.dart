@@ -43,22 +43,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isSelectAll = false;
-  List<bool> selectedProducts =
-      List.generate(products.length, (index) => false);
 
-  void toggleSelectAll(bool? value) {
-    setState(() {
-      isSelectAll = value ?? false;
-      selectedProducts = List.generate(products.length, (index) => isSelectAll);
-    });
-  }
-
-  void toggleProduct(int index) {
-    setState(() {
-      selectedProducts[index] = !selectedProducts[index];
-      isSelectAll = selectedProducts.every((selected) => selected);
-    });
-  }
+  void toggleProduct(int index) {}
 
   final cubit = HomeCubit();
 
@@ -107,6 +93,9 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 44,
                   child: TextField(
+                    onChanged: (text) {
+                      cubit.search(text);
+                    },
                     decoration: InputDecoration(
                       hintText: 'Cari Data',
                       hintStyle:
@@ -140,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(2),
                       ),
-                      onChanged: toggleSelectAll,
+                      onChanged: (_) {},
                     ),
                     const Text('Pilih Semua', style: TextStyle(fontSize: 14)),
                     const Spacer(),
@@ -156,15 +145,22 @@ class _HomePageState extends State<HomePage> {
                 //Product list
                 Expanded(
                   child: ListView.builder(
-                    itemCount: state.list.length,
+                    itemCount: state.searchList.isEmpty
+                        ? state.list.length
+                        : state.searchList.length,
                     itemBuilder: (_, index) {
+                      final list = state.searchList.isEmpty
+                          ? state.list
+                          : state.searchList;
                       return ProductItem(
-                        company: products[index]["company"],
-                        name: products[index]["name"],
-                        categories:
-                            List<String>.from(products[index]["categories"]),
-                        codes: List<String>.from(products[index]["codes"]),
-                        isSelected: selectedProducts[index],
+                        company: list[index].companyName ?? '',
+                        name: list[index].productName ?? '',
+                        categories: List<String>.from([
+                          list[index].category,
+                          list[index].subCategory
+                        ]),
+                        codes: List<String>.from(state.list[index].barcodes),
+                        isSelected: false,
                         onToggle: () => toggleProduct(index),
                       );
                     },
